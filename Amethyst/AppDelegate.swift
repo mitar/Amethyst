@@ -117,7 +117,7 @@ open class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @IBAction open func showPreferencesWindow(_ sender: AnyObject) {
-        if UserConfiguration.shared.hasCustomConfiguration() {
+        if UserConfiguration.shared.hasCustomConfiguration {
             let alert = NSAlert()
             alert.alertStyle = .warning
             alert.messageText = "Warning"

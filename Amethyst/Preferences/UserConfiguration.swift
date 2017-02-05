@@ -22,70 +22,95 @@ public protocol ConfigurationStorage {
 
 extension UserDefaults: ConfigurationStorage {}
 
-internal enum ConfigurationKey: String {
-    case Layouts = "layouts"
-    case CommandMod = "mod"
-    case CommandKey = "key"
-    case Mod1 = "mod1"
-    case Mod2 = "mod2"
-    case Screens = "screens"
-    case WindowMargins = "window-margins"
-    case WindowMarginSize = "window-margin-size"
-    case FloatingBundleIdentifiers = "floating"
-    case IgnoreMenuBar = "ignore-menu-bar"
-    case FloatSmallWindows = "float-small-windows"
-    case MouseFollowsFocus = "mouse-follows-focus"
-    case FocusFollowsMouse = "focus-follows-mouse"
-    case LayoutHUD = "enables-layout-hud"
-    case LayoutHUDOnSpaceChange = "enables-layout-hud-on-space-change"
-    case UseCanaryBuild = "use-canary-build"
-    case NewWindowsToMain = "new-windows-to-main"
-    case SendCrashReports = "send-crash-reports"
-    case WindowResizeStep = "window-resize-step"
+public extension ConfigurationStorage {
+    public func object(for key: ConfigurationKey) -> Any? {
+        return object(forKey: key.rawValue)
+    }
+    public func array(for key: ConfigurationKey) -> [Any]? {
+        return array(forKey: key.rawValue)
+    }
+    public func bool(for key: ConfigurationKey) -> Bool {
+        return bool(forKey: key.rawValue)
+    }
+    public func float(for key: ConfigurationKey) -> Float {
+        return float(forKey: key.rawValue)
+    }
+    public func stringArray(for key: ConfigurationKey) -> [String]? {
+        return stringArray(forKey: key.rawValue)
+    }
 
-    static var defaultsKeys: [ConfigurationKey] {
+    public func set(_ value: Any?, for key: ConfigurationKey) {
+        set(value, forKey: key.rawValue)
+    }
+    public func set(_ value: Bool, for key: ConfigurationKey) {
+        set(value, forKey: key.rawValue)
+    }
+}
+
+public enum ConfigurationKey: String {
+    case layouts = "layouts"
+    case commandMod = "mod"
+    case commandKey = "key"
+    case mod1 = "mod1"
+    case mod2 = "mod2"
+    case screens = "screens"
+    case windowMargins = "window-margins"
+    case windowMarginSize = "window-margin-size"
+    case floatingBundleIdentifiers = "floating"
+    case ignoreMenuBar = "ignore-menu-bar"
+    case floatSmallWindows = "float-small-windows"
+    case mouseFollowsFocus = "mouse-follows-focus"
+    case focusFollowsMouse = "focus-follows-mouse"
+    case layoutHUD = "enables-layout-hud"
+    case layoutHUDOnSpaceChange = "enables-layout-hud-on-space-change"
+    case useCanaryBuild = "use-canary-build"
+    case newWindowsToMain = "new-windows-to-main"
+    case sendCrashReports = "send-crash-reports"
+    case windowResizeStep = "window-resize-step"
+
+    fileprivate static var defaultsKeys: [ConfigurationKey] {
         return [
-            .Layouts,
-            .FloatingBundleIdentifiers,
-            .IgnoreMenuBar,
-            .FloatSmallWindows,
-            .MouseFollowsFocus,
-            .FocusFollowsMouse,
-            .LayoutHUD,
-            .LayoutHUDOnSpaceChange,
-            .UseCanaryBuild,
-            .WindowMargins,
-            .WindowMarginSize,
-            .SendCrashReports,
-            .WindowResizeStep
+            .layouts,
+            .floatingBundleIdentifiers,
+            .ignoreMenuBar,
+            .floatSmallWindows,
+            .mouseFollowsFocus,
+            .focusFollowsMouse,
+            .layoutHUD,
+            .layoutHUDOnSpaceChange,
+            .useCanaryBuild,
+            .windowMargins,
+            .windowMarginSize,
+            .sendCrashReports,
+            .windowResizeStep
         ]
     }
 }
 
 public enum CommandKey: String {
-    case CycleLayoutForward = "cycle-layout"
-    case CycleLayoutBackward = "cycle-layout-backward"
-    case ShrinkMain = "shrink-main"
-    case ExpandMain = "expand-main"
-    case IncreaseMain = "increase-main"
-    case DecreaseMain = "decrease-main"
-    case FocusCCW = "focus-ccw"
-    case FocusCW = "focus-cw"
-    case SwapScreenCCW = "swap-screen-ccw"
-    case SwapScreenCW = "swap-screen-cw"
-    case SwapCCW = "swap-ccw"
-    case SwapCW = "swap-cw"
-    case SwapMain = "swap-main"
-    case ThrowSpacePrefix = "throw-space"
-    case FocusScreenPrefix = "focus-screen"
-    case ThrowScreenPrefix = "throw-screen"
-    case ThrowSpaceLeft = "throw-space-left"
-    case ThrowSpaceRight = "throw-space-right"
-    case ToggleFloat = "toggle-float"
-    case DisplayCurrentLayout = "display-current-layout"
-    case ToggleTiling = "toggle-tiling"
-    case ReevaluateWindows = "reevaluate-windows"
-    case ToggleFocusFollowsMouse = "toggle-focus-follows-mouse"
+    case cycleLayoutForward = "cycle-layout"
+    case cycleLayoutBackward = "cycle-layout-backward"
+    case shrinkMain = "shrink-main"
+    case expandMain = "expand-main"
+    case increaseMain = "increase-main"
+    case decreaseMain = "decrease-main"
+    case focusCCW = "focus-ccw"
+    case focusCW = "focus-cw"
+    case swapScreenCCW = "swap-screen-ccw"
+    case swapScreenCW = "swap-screen-cw"
+    case swapCCW = "swap-ccw"
+    case swapCW = "swap-cw"
+    case swapMain = "swap-main"
+    case throwSpacePrefix = "throw-space"
+    case focusScreenPrefix = "focus-screen"
+    case throwScreenPrefix = "throw-screen"
+    case throwSpaceLeft = "throw-space-left"
+    case throwSpaceRight = "throw-space-right"
+    case toggleFloat = "toggle-float"
+    case displayCurrentLayout = "display-current-layout"
+    case toggleTiling = "toggle-tiling"
+    case reevaluateWindows = "reevaluate-windows"
+    case toggleFocusFollowsMouse = "toggle-focus-follows-mouse"
 }
 
 public protocol UserConfigurationDelegate: class {
@@ -106,6 +131,9 @@ public class UserConfiguration: NSObject {
 
     internal var configuration: JSON?
     internal var defaultConfiguration: JSON?
+    public var hasCustomConfiguration: Bool {
+        return configuration != nil
+    }
 
     internal var modifier1: AMModifierFlags?
     internal var modifier2: AMModifierFlags?
@@ -119,7 +147,7 @@ public class UserConfiguration: NSObject {
         self.init(storage: UserDefaults.standard)
     }
 
-    fileprivate func configurationValueForKey<T>(_ key: ConfigurationKey) -> T? {
+    private func configurationValueForKey<T>(_ key: ConfigurationKey) -> T? {
         guard let exists = configuration?[key.rawValue].exists(), exists else {
             return defaultConfiguration![key.rawValue].object as? T
         }
@@ -151,7 +179,7 @@ public class UserConfiguration: NSObject {
     }
 
     internal func screenCount() -> Int {
-        guard let screens: NSObject = configurationValueForKey(.Screens) else {
+        guard let screens: NSObject = configurationValueForKey(.screens) else {
             return 4
         }
 
@@ -164,7 +192,7 @@ public class UserConfiguration: NSObject {
         }
     }
 
-    open func load() {
+    public func load() {
         loadConfigurationFile()
         loadConfiguration()
     }
@@ -173,7 +201,7 @@ public class UserConfiguration: NSObject {
         for key in ConfigurationKey.defaultsKeys {
             let value = configuration?[key.rawValue]
             let defaultValue = defaultConfiguration?[key.rawValue]
-            let existingValue = storage.object(forKey: key.rawValue)
+            let existingValue = storage.object(for: key)
 
             let hasLocalConfigurationValue = (value != nil && value?.error == nil)
             let hasDefaultConfigurationValue = (defaultValue != nil && defaultValue?.error == nil)
@@ -183,7 +211,7 @@ public class UserConfiguration: NSObject {
                 continue
             }
 
-            storage.set(hasLocalConfigurationValue ? value?.object : defaultValue?.object as Any?, forKey: key.rawValue)
+            storage.set(hasLocalConfigurationValue ? value?.object : defaultValue?.object as Any?, for: key)
         }
     }
 
@@ -226,15 +254,15 @@ public class UserConfiguration: NSObject {
             alert.runModal()
         }
 
-        let mod1Strings: [String] = configurationValueForKey(.Mod1)!
-        let mod2Strings: [String] = configurationValueForKey(.Mod2)!
+        let mod1Strings: [String] = configurationValueForKey(.mod1)!
+        let mod2Strings: [String] = configurationValueForKey(.mod2)!
 
         modifier1 = modifierFlagsForStrings(mod1Strings)
         modifier2 = modifierFlagsForStrings(mod2Strings)
         screens = screenCount()
     }
 
-    open static func constructLayoutKeyString(_ layoutString: String) -> String {
+    public static func layoutCommandString(for layoutString: String) -> String {
         return "select-\(layoutString)-layout"
     }
 
@@ -244,7 +272,7 @@ public class UserConfiguration: NSObject {
         if command != nil {
             override = true
         } else {
-            if configuration?[ConfigurationKey.Mod1.rawValue] != nil || configuration?[ConfigurationKey.Mod2.rawValue] != nil {
+            if configuration?[ConfigurationKey.mod1.rawValue] != nil || configuration?[ConfigurationKey.mod2.rawValue] != nil {
                 override = true
             }
             command = defaultConfiguration?[commandKey].object as? [String: String]
@@ -255,12 +283,12 @@ public class UserConfiguration: NSObject {
             return
         }
 
-        guard let commandKeyString = commandInfo[ConfigurationKey.CommandKey.rawValue] else {
+        guard let commandKeyString = commandInfo[ConfigurationKey.commandKey.rawValue] else {
             LogManager.log?.warning("No keys specified for command: \(commandKey)")
             return
         }
 
-        guard let commandModifierString = commandInfo[ConfigurationKey.CommandMod.rawValue] else {
+        guard let commandModifierString = commandInfo[ConfigurationKey.commandMod.rawValue] else {
             LogManager.log?.warning("No mod specified for command: \(commandKey)")
             return
         }
@@ -286,11 +314,7 @@ public class UserConfiguration: NSObject {
         )
     }
 
-    open func hasCustomConfiguration() -> Bool {
-        return configuration != nil
-    }
-
-    fileprivate func modifierFlagsForModifierString(_ modifierString: String) -> AMModifierFlags {
+    private func modifierFlagsForModifierString(_ modifierString: String) -> AMModifierFlags {
         switch modifierString {
         case "mod1":
             return modifier1!
@@ -302,17 +326,16 @@ public class UserConfiguration: NSObject {
         }
     }
 
-    open func layoutStrings() -> [String] {
-        let layoutStrings = storage.array(forKey: ConfigurationKey.Layouts.rawValue) as? [String]
-        return layoutStrings ?? []
+    public func layoutStrings() -> [String] {
+        return storage.stringArray(for: .layouts) ?? []
     }
 
-    open func setLayoutStrings(_ layoutStrings: [String]) {
-        storage.set(layoutStrings as Any?, forKey: ConfigurationKey.Layouts.rawValue)
+    public func setLayoutStrings(_ layoutStrings: [String]) {
+        storage.set(layoutStrings as Any?, for: .layouts)
     }
 
-    open func runningApplicationShouldFloat(_ runningApplication: BundleIdentifiable) -> Bool {
-        guard let floatingBundleIdentifiers = storage.object(forKey: ConfigurationKey.FloatingBundleIdentifiers.rawValue) as? [String] else {
+    public func runningApplicationShouldFloat(_ runningApplication: BundleIdentifiable) -> Bool {
+        guard let floatingBundleIdentifiers = storage.stringArray(for: .floatingBundleIdentifiers) else {
             return false
         }
 
@@ -332,64 +355,63 @@ public class UserConfiguration: NSObject {
         return false
     }
 
-    open func ignoreMenuBar() -> Bool {
-        return storage.bool(forKey: ConfigurationKey.IgnoreMenuBar.rawValue)
+    public func ignoreMenuBar() -> Bool {
+        return storage.bool(for: .ignoreMenuBar)
     }
 
-    open func floatSmallWindows() -> Bool {
-        return storage.bool(forKey: ConfigurationKey.FloatSmallWindows.rawValue)
+    public func floatSmallWindows() -> Bool {
+        return storage.bool(for: .floatSmallWindows)
     }
 
-    open func mouseFollowsFocus() -> Bool {
-        return storage.bool(forKey: ConfigurationKey.MouseFollowsFocus.rawValue)
+    public func mouseFollowsFocus() -> Bool {
+        return storage.bool(for: .mouseFollowsFocus)
     }
 
-    open func focusFollowsMouse() -> Bool {
-        return storage.bool(forKey: ConfigurationKey.FocusFollowsMouse.rawValue)
+    public func focusFollowsMouse() -> Bool {
+        return storage.bool(for: .focusFollowsMouse)
     }
 
-    open func toggleFocusFollowsMouse() {
-        storage.set(!focusFollowsMouse(), forKey: ConfigurationKey.FocusFollowsMouse.rawValue)
+    public func toggleFocusFollowsMouse() {
+        storage.set(!focusFollowsMouse(), for: .focusFollowsMouse)
     }
 
-    open func enablesLayoutHUD() -> Bool {
-        return storage.bool(forKey: ConfigurationKey.LayoutHUD.rawValue)
+    public func enablesLayoutHUD() -> Bool {
+        return storage.bool(for: .layoutHUD)
     }
 
-    open func enablesLayoutHUDOnSpaceChange() -> Bool {
-        return storage.bool(forKey: ConfigurationKey.LayoutHUDOnSpaceChange.rawValue)
+    public func enablesLayoutHUDOnSpaceChange() -> Bool {
+        return storage.bool(for: .layoutHUDOnSpaceChange)
     }
 
-    open func useCanaryBuild() -> Bool {
-        return storage.bool(forKey: ConfigurationKey.UseCanaryBuild.rawValue)
+    public func useCanaryBuild() -> Bool {
+        return storage.bool(for: .useCanaryBuild)
     }
 
-    open func windowMarginSize() -> CGFloat {
-        return CGFloat(storage.float(forKey: ConfigurationKey.WindowMarginSize.rawValue))
+    public func windowMarginSize() -> CGFloat {
+        return CGFloat(storage.float(for: .windowMarginSize))
     }
 
-    open func windowMargins() -> Bool {
-        return storage.bool(forKey: ConfigurationKey.WindowMargins.rawValue)
+    public func windowMargins() -> Bool {
+        return storage.bool(for: .windowMargins)
     }
 
-    open func windowResizeStep() -> CGFloat {
-        return CGFloat(storage.float(forKey: ConfigurationKey.WindowResizeStep.rawValue) / 100.0)
+    public func windowResizeStep() -> CGFloat {
+        return CGFloat(storage.float(for: .windowResizeStep) / 100.0)
     }
 
-    open func floatingBundleIdentifiers() -> [String] {
-        let floatingBundleIdentifiers = storage.stringArray(forKey: ConfigurationKey.FloatingBundleIdentifiers.rawValue)
-        return floatingBundleIdentifiers ?? []
+    public func floatingBundleIdentifiers() -> [String] {
+        return storage.stringArray(for: .floatingBundleIdentifiers) ?? []
     }
 
-    open func setFloatingBundleIdentifiers(_ floatingBundleIdentifiers: [String]) {
-        storage.set(floatingBundleIdentifiers as Any?, forKey: ConfigurationKey.FloatingBundleIdentifiers.rawValue)
+    public func setFloatingBundleIdentifiers(_ floatingBundleIdentifiers: [String]) {
+        storage.set(floatingBundleIdentifiers as Any?, for: .floatingBundleIdentifiers)
     }
 
-    open func sendNewWindowsToMainPane() -> Bool {
-        return storage.bool(forKey: ConfigurationKey.NewWindowsToMain.rawValue)
+    public func sendNewWindowsToMainPane() -> Bool {
+        return storage.bool(for: .newWindowsToMain)
     }
 
-    open func shouldSendCrashReports() -> Bool {
-        return storage.bool(forKey: ConfigurationKey.SendCrashReports.rawValue)
+    public func shouldSendCrashReports() -> Bool {
+        return storage.bool(for: .sendCrashReports)
     }
 }

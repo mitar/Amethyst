@@ -298,7 +298,7 @@ public class UserConfigurationTests: QuickSpec {
                     ]
                 ]
 
-                storage.set(existingLayouts, forKey: ConfigurationKey.Layouts.rawValue)
+                storage.set(existingLayouts, for: .layouts)
 
                 expect(configuration.layoutStrings()).to(equal(existingLayouts))
                 configuration.defaultConfiguration = JSON(defaultConfiguration)
@@ -321,7 +321,7 @@ public class UserConfigurationTests: QuickSpec {
                     ]
                 ]
                 
-                storage.set(existingLayouts, forKey: ConfigurationKey.Layouts.rawValue)
+                storage.set(existingLayouts, for: .layouts)
                 
                 expect(configuration.layoutStrings()).to(equal(existingLayouts))
                 configuration.configuration = JSON(localConfiguration)
